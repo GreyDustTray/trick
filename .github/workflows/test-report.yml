@@ -1,4 +1,5 @@
 name: Test Report
+run-name: Test Report — ${{ github.event.workflow_run.display_title }}
 
 on:
   workflow_run:
@@ -19,11 +20,12 @@ jobs:
       - name: Publish Test Report
         uses: dorny/test-reporter@v3
         with:
-          # Matches all Trick_* artifacts uploaded by the CI workflow.
-          artifact: /Trick_(.*)/
-          name: Test Results ($1)
+          # Matches all Test - * artifacts uploaded by the CI workflow.
+          artifact: /Test - (.*)/
+          name: $1
           path: "*.xml"
           reporter: java-junit
           fail-on-error: false
           fail-on-empty: false
           max-annotations: 50
+          use-actions-summary: false

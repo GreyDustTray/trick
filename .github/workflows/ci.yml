@@ -235,6 +235,9 @@ jobs:
     needs: [style]
     # TODO: Remove always() once style enforcement is stable — ideally builds only run on clean style.
     if: always()
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.job }}-${{ matrix.cfg.os }}-${{ matrix.cfg.tag }}-${{ github.head_ref || github.run_id }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     container: docker://${{ matrix.cfg.image }}:${{ matrix.cfg.tag }}
     strategy:
@@ -365,7 +368,7 @@ jobs:
         uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
-          name: Trick_${{ matrix.cfg.os }}${{ matrix.cfg.tag }}
+          name: Test - Linux (${{ matrix.cfg.os }} ${{ matrix.cfg.tag }})
           path: trick_test/*.xml
           if-no-files-found: warn
           retention-days: 1
@@ -375,6 +378,9 @@ jobs:
     needs: [style]
     # TODO: Remove always() once style enforcement is stable — ideally builds only run on clean style.
     if: always()
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.job }}-${{ github.head_ref || github.run_id }}
+      cancel-in-progress: true
     runs-on: macos-26
     env:
       MAKEFLAGS: -j4
@@ -415,7 +421,7 @@ jobs:
         uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
-          name: Trick_macos
+          name: Test - macOS
           path: trick_test/*.xml
           if-no-files-found: warn
           retention-days: 1
@@ -425,6 +431,9 @@ jobs:
     needs: [style]
     # TODO: Remove always() once style enforcement is stable — ideally builds only run on clean style.
     if: always()
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.job }}-${{ matrix.name }}-${{ github.head_ref || github.run_id }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     container: ${{ matrix.image }}
     strategy:
@@ -469,7 +478,7 @@ jobs:
         uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: trickops_${{ strategy.job-index }}
+          name: TrickOps - ${{ matrix.name }}
           path: |
             share/trick/trickops/tests/*_doctest_log.txt
             /tmp/log.*
